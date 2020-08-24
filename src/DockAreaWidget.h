@@ -65,6 +65,7 @@ private:
 	friend class CDockWidget;
 	friend struct DockManagerPrivate;
 	friend class CDockManager;
+	void onDockWidgetFeaturesChanged();
 
 private slots:
 	void onTabCloseRequested(int Index);
@@ -309,7 +310,7 @@ public:
     /**
      * Returns true if the area contains the central widget of it's manager.
      */
-    bool isCentralWidgetArea();
+    bool isCentralWidgetArea() const;
 
 public slots:
 	/**

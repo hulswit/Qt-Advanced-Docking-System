@@ -87,18 +87,6 @@ public:
 	}
 
 	/**
-	 * Delete widgets without parents in this layout
-	 */
-	~CDockAreaLayout()
-	{
-		for(auto Widget : m_Widgets)
-		{
-			if(!Widget->parent())
-				delete Widget;
-		}
-	}
-
-	/**
 	 * Returns the number of widgets in this layout
 	 */
 	int count() const
@@ -187,6 +175,7 @@ public:
 		{
 			LayoutItem->widget()->setParent(nullptr);
 		}
+		delete LayoutItem;
 
 		m_ParentLayout->addWidget(next);
 		if (prev)
@@ -247,7 +236,7 @@ public:
 
 
 using DockAreaLayout = CDockAreaLayout;
-static constexpr DockWidgetAreas DefaultAllowedAreas = AllDockAreas;
+static const DockWidgetAreas DefaultAllowedAreas = AllDockAreas;
 
 
 /**
@@ -968,12 +957,14 @@ CDockAreaTitleBar* CDockAreaWidget::titleBar() const
 
 
 //============================================================================
-bool CDockAreaWidget::isCentralWidgetArea()
+bool CDockAreaWidget::isCentralWidgetArea() const
 {
-    if(dockWidgetsCount()!=1)
+    if (dockWidgetsCount()!= 1)
+    {
         return false;
+    }
 
-    return dockManager()->centralWidget()==dockWidgets()[0];
+    return dockManager()->centralWidget() == dockWidgets()[0];
 }
 
 
@@ -982,6 +973,18 @@ QSize CDockAreaWidget::minimumSizeHint() const
 {
 	return d->MinSizeHint.isValid() ? d->MinSizeHint : Super::minimumSizeHint();
 }
+
+
+//============================================================================
+void CDockAreaWidget::onDockWidgetFeaturesChanged()
+{
+	if (d->TitleBar)
+	{
+		d->updateTitleBarButtonStates();
+	}
+}
+
+
 } // namespace ads
 
 //---------------------------------------------------------------------------

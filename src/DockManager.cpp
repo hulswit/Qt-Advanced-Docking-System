@@ -297,11 +297,11 @@ bool DockManagerPrivate::restoreStateFromXml(const QByteArray &state,  int versi
     {
 		// Delete remaining empty floating widgets
 		int FloatingWidgetIndex = DockContainerCount - 1;
-		int DeleteCount = FloatingWidgets.count() - FloatingWidgetIndex;
-		for (int i = 0; i < DeleteCount; ++i)
+		for (int i = FloatingWidgetIndex; i < FloatingWidgets.count(); ++i)
 		{
-			FloatingWidgets[FloatingWidgetIndex + i]->deleteLater();
-			_this->removeDockContainer(FloatingWidgets[FloatingWidgetIndex + i]->dockContainer());
+			auto* floatingWidget = FloatingWidgets[i];
+			_this->removeDockContainer(floatingWidget->dockContainer());
+			floatingWidget->deleteLater();
 		}
     }
 
@@ -655,14 +655,7 @@ void CDockManager::showEvent(QShowEvent *event)
 
 	for (auto FloatingWidget : d->UninitializedFloatingWidgets)
 	{
-		for(CDockWidget* DockWidget : FloatingWidget->dockWidgets())
-		{
-			if(!DockWidget->isClosed())
-			{
-				FloatingWidget->show();
-				break;
-			}
-		}
+		FloatingWidget->show();
 	}
 	d->UninitializedFloatingWidgets.clear();
 }
@@ -825,31 +818,38 @@ void CDockManager::loadPerspectives(QSettings& Settings)
 	Settings.endArray();
 }
 
-CDockWidget* CDockManager::centralWidget()
+
+//============================================================================
+CDockWidget* CDockManager::centralWidget() const
 {
     return d->CentralWidget;
 }
 
-//============================================================================
-CDockAreaWidget* CDockManager::setCentralWidget(CDockWidget* widget, CDockWidget* oldCentralWidget, DockWidgetArea oldCentralWidgetArea)
-{
-    oldCentralWidget = d->CentralWidget;
-    if(oldCentralWidget)
-    {
-        addDockWidget(oldCentralWidgetArea, oldCentralWidget);
-    }
 
-    if(widget)
-    {
-        widget->setFeature(CDockWidget::DockWidgetClosable, false);
-        widget->setFeature(CDockWidget::DockWidgetMovable, false);
-        widget->setFeature(CDockWidget::DockWidgetFloatable, false);
-        d->CentralWidget = widget;
-        CDockAreaWidget* CentralArea = addDockWidget(CenterDockWidgetArea, widget);
-        CentralArea->setDockAreaFlag(CDockAreaWidget::eDockAreaFlag::HideSingleWidgetTitleBar, true);
-        return CentralArea;
-    }
-    return nullptr;
+//============================================================================
+CDockAreaWidget* CDockManager::setCentralWidget(CDockWidget* widget)
+{
+	if (!widget)
+	{
+		d->CentralWidget = nullptr;
+		return nullptr;
+	}
+
+	// Setting a new central widget is now allowed if there is alread a central
+	// widget
+	if (d->CentralWidget)
+	{
+		return nullptr;
+	}
+
+
+	widget->setFeature(CDockWidget::DockWidgetClosable, false);
+	widget->setFeature(CDockWidget::DockWidgetMovable, false);
+	widget->setFeature(CDockWidget::DockWidgetFloatable, false);
+	d->CentralWidget = widget;
+	CDockAreaWidget* CentralArea = addDockWidget(CenterDockWidgetArea, widget);
+	CentralArea->setDockAreaFlag(CDockAreaWidget::eDockAreaFlag::HideSingleWidgetTitleBar, true);
+	return CentralArea;
 }
 
 //============================================================================

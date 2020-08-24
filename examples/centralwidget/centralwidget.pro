@@ -1,6 +1,6 @@
 ADS_OUT_ROOT = $${OUT_PWD}/../..
 
-QT += core gui widgets
+QT       += core gui widgets
 
 TARGET = CentralWidgetExample
 DESTDIR = $${ADS_OUT_ROOT}/lib
