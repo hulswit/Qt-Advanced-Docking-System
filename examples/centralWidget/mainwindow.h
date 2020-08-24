@@ -8,22 +8,22 @@
 #include "DockWidget.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class CMainWindow; }
+namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class CMainWindow : public QMainWindow
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    CMainWindow(QWidget *parent = nullptr);
-    ~CMainWindow();
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 
 private:
     static const QString kTableTopLayout;
     static const QString kTableBottomLayout;
 
-    Ui::CMainWindow *ui;
+    Ui::MainWindow *ui;
 
     ads::CDockManager* DockManager;
     ads::CDockAreaWidget* StatusDockArea;

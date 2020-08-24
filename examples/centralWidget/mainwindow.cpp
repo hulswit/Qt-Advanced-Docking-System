@@ -23,7 +23,7 @@
 
 using namespace ads;
 
-const QString CMainWindow::kTableTopLayout = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+const QString MainWindow::kTableTopLayout = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         "<QtAdvancedDockingSystem Version=\"1\" UserVersion=\"0\" Containers=\"1\">"
             "<Container Floating=\"0\">"
                 "<Splitter Orientation=\"-\" Count=\"3\">"
@@ -56,7 +56,7 @@ const QString CMainWindow::kTableTopLayout = "<?xml version=\"1.0\" encoding=\"U
             "</Container>"
         "</QtAdvancedDockingSystem>";
 
-const QString CMainWindow::kTableBottomLayout = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+const QString MainWindow::kTableBottomLayout = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         "<QtAdvancedDockingSystem Version=\"1\" UserVersion=\"0\" Containers=\"1\">"
             "<Container Floating=\"0\">"
                 "<Splitter Orientation=\"-\" Count=\"3\">"
@@ -84,9 +84,9 @@ const QString CMainWindow::kTableBottomLayout = "<?xml version=\"1.0\" encoding=
             "</Container>"
         "</QtAdvancedDockingSystem>";
 
-CMainWindow::CMainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::CMainWindow)
+    , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     CDockManager::setConfigFlag(CDockManager::OpaqueSplitterResize, true);
@@ -149,7 +149,7 @@ CMainWindow::CMainWindow(QWidget *parent)
     auto *TimelineDockArea = DockManager->addDockWidget(DockWidgetArea::TopDockWidgetArea, TimelineDockWidget);
     TimelineDockArea->setDockAreaFlag(CDockAreaWidget::eDockAreaFlag::HideSingleWidgetTitleBar, true);
     TimelineDockArea->setAllowedAreas(DockWidgetArea::OuterDockAreas);
-    connect(radioDockTop, &QRadioButton::toggled, [this](bool checked){
+    connect(radioDockTop, &QRadioButton::toggled, [&](bool checked){
         bool ok = true;
         if(!checked)
         {
@@ -172,7 +172,7 @@ CMainWindow::CMainWindow(QWidget *parent)
     statusLayout->setSpacing(10);
     statusLayout->addWidget(new QLabel("Status Bar"));
     QPushButton* OpenPerspectiveButton = new QPushButton("Open Perspective", statusWidget);
-    connect(OpenPerspectiveButton, &QPushButton::clicked, [this](){
+    connect(OpenPerspectiveButton, &QPushButton::clicked, [&](){
         QString PerspectiveName = QFileDialog::getOpenFileName(this, "Open Perspective", "", "Perspective files (*.xml)");
         if (PerspectiveName.isEmpty())
         {
@@ -191,7 +191,7 @@ CMainWindow::CMainWindow(QWidget *parent)
         }
     });
     QPushButton* SavePerspectiveButton = new QPushButton("Create Perspective", statusWidget);
-    connect(SavePerspectiveButton, &QPushButton::clicked, [this](){
+    connect(SavePerspectiveButton, &QPushButton::clicked, [&](){
         QString PerspectiveName = QInputDialog::getText(this, "Save Perspective", "Enter unique name:");
         if (PerspectiveName.isEmpty())
         {
@@ -219,7 +219,7 @@ CMainWindow::CMainWindow(QWidget *parent)
     StatusDockArea->setDockAreaFlag(ads::CDockAreaWidget::eDockAreaFlag::HideSingleWidgetTitleBar, true);
 }
 
-CMainWindow::~CMainWindow()
+MainWindow::~MainWindow()
 {
     delete ui;
 }
